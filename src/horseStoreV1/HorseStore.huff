@@ -1,0 +1,82 @@
+// send calldata -> fucntion dispatch -> fucntion
+
+// 60008060093d393df3 -> Contract Creation Bytecode "Hey take the binary after me and stick it on-chain"
+// Lets find the function selector -> route it to the code that updates the horse
+// #define macro MAIN() = takes(0) returns(0) {
+//     // PUSH0 = 0x00
+//     // 0x00 //[0]
+//     // // 0x02 // Top [2,0] Bottom
+//     // // now bytecode looks like this -> 60018060093d393df35f
+//     // calldataload //This replaces the [0] with the first 32 bytes of calldata
+
+//     // //How do we cut down the call data to just the function selector
+//     // //We need to right shift 56 dec = 56/2 = 28 bytes * 8 = 224 bits
+//     // 0xe0                                       //[0xe0, calldata(32)]
+//     0x00 calldata 0xE0 shr                   //[function_selector] on the stack
+
+//     //0xcdfead2e = updateHorseNumber
+//     //0xe026c017 = readHorseNumber
+//     //updateNumberOfHorses
+//     dup1                //[function_selector, function_selector]
+//     0xcdfead2e          //[0xcdfead2e, function_selector, function_selector]Stack
+//     eq                  //[true_if_func_selector_matches, function_selector]
+//     // jump to updateHorseNumber if true
+//     updateJump          //[updateHorseNumberProgramCounter, true/false, function_selector], if true we will jump to updateHorseNumber, otherwise we won't do anything
+//     jumpi               //[function_selector]
+
+//     //readNumberOfHorse, 0x026c017
+//     0xe026c017          //[0xe026c017, function_selector]
+//     eq                  //[true_if_func_selector_matches]
+//     readJump            //[readJump,true_if_func_selector_matches]
+//     jumpi               //[]
+
+//     0x00 0x00 revert
+
+/*Interface */
+#define function updateHorseNumber(uint256) nonpayable returns()
+#define function readHorseNumber() view returns(uint256)
+
+#define constant NUMBER_OF_HORSES_STORAGE_SLOT = FREE_STORAGE_POINTER() //Storage Slot = [0]
+//#define constant NUMBER_OF_HORSES_STORAGE_SLOT2 = FREE_STORAGE_POINTER() //Storage Slot = [1]
+
+
+#define macro MAIN() = takes(0) returns(0) {
+    0x00 calldataload 0xE0 shr
+    //updateNumberOfHorses
+    dup1 __FUNC_SIG(updateHorseNumber) eq updateJump jumpi
+    //readNumberOfHorse
+    __FUNC_SIG(readHorseNumber) eq readJump jumpi
+
+    0x00 0x00 revert
+
+    updateJump:
+        SET_NUMBER_OF_HORSES()
+    
+    readJump:
+        GET_NUMBER_OF_HORSES()
+}
+
+#define macro SET_NUMBER_OF_HORSES() = take(0) returns(0) {
+    //2. Get the value to store from calldata
+    0x04                                //[4]
+    calldataload                        //[value]
+    // 1. Give it a storage slot
+    [NUMBER_OF_HORSES_STORAGE_SLOT]     //[storage_slot,value]
+    // 3. SSTORE opcode
+    sstore
+    stop
+
+    
+}
+
+#define macro GET_NUMBER_OF_HORSES() = take(0) returns(0) {
+    //1. Get the storage slot
+    //2. Load the value of that slot into memory
+    //3. Return
+    [NUMBER_OF_HORSES_STORAGE_SLOT]     //[key]
+    sload                               //[value]
+    0x00                                //[0, value]
+    mstore                              //[] //Memory:[value]
+    //0x20 = 32 bytes
+    0x20 0x00 return                    //[] //returns memory
+}
