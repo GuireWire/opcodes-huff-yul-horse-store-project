@@ -1,14 +1,12 @@
 <p align="center">
-<img src="./images/horse-store.png" width="400" alt="horse-store">
+<img src="Cyfrin/images/horse-store.png" width="400" alt="horse-store">
 <br/>
 
 # Horse Store 
 
-This is *not* an audit. This is the codebase of the course for you to learn how compilers and opcodes work. We will be dissecting contracts that you build and tinker with. 
+This is the codebase of the course to learn how compilers and opcodes work. We will be dissecting contracts that you build and tinker with. 
 
 We will be using huff, solidity, and yul to do so.
-
-We are also (later) going to use this repo to understand the basics of formal verification. 
 
 # Getting Started
 
