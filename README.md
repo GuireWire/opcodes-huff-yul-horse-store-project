@@ -1,5 +1,6 @@
 <p align="center">
-<img src="Cyfrin/images/horse-store.png" width="400" alt="horse-store">
+<img src="Cyfrin/1-horse-store-s23/blob/main/images/horse-store.png" width="400" alt="horse-store">
+
 <br/>
 
 # Horse Store 
