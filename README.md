@@ -1,8 +1,3 @@
-<p align="center">
-<img src="Cyfrin/1-horse-store-s23/blob/main/images/horse-store.png" width="400" alt="horse-store">
-
-<br/>
-
 # Horse Store 
 
 This is the codebase of the course to learn how compilers and opcodes work. We will be dissecting contracts that you build and tinker with. 
